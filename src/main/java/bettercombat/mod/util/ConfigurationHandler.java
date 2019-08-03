@@ -140,17 +140,19 @@ public class ConfigurationHandler
         Arrays.stream(BlacklistType.VALUES).forEach(t -> offhandBlacklistMap.put(t, new ArrayList<>()));
 
         Arrays.stream(itemWhitelist).forEach(s -> {
-            int colonIndex = s.indexOf(':');
-            if( colonIndex > 0 ) {
-                String typeStr = s.substring(0, colonIndex - 1);
+            String[] ss = s.split(":");
+            if(ss.length == 2) {
+                String typeStr = ss[0];
                 try {
                     WhitelistType type = WhitelistType.valueOf(typeStr);
-                    String value = s.substring(colonIndex + 1);
+                    String value = ss[1];
                     switch( type ) {
                         case CLASS: {
                             try {
                                 itemWhitelistMap.get(type).add(Class.forName(value));
-                            } catch( ClassNotFoundException ignored ) { }
+                            } catch( ClassNotFoundException ignored ) {
+                                BetterCombatMod.LOG.log(Level.WARN, String.format("Unknown whitelist class: %s", value));
+                            }
                         } break;
                         case NAME: {
                             Item item = Item.REGISTRY.getObject(new ResourceLocation(value));
@@ -166,12 +168,12 @@ public class ConfigurationHandler
         });
 
         Arrays.stream(offhandBlacklist).forEach(s -> {
-            int colonIndex = s.indexOf(':');
-            if( colonIndex > 0 ) {
-                String typeStr = s.substring(0, colonIndex - 1);
+            String[] ss = s.split(":");
+            if(ss.length == 2) {
+                String typeStr = ss[0];
                 try {
                     BlacklistType type = BlacklistType.valueOf(typeStr);
-                    String value = s.substring(colonIndex + 1);
+                    String value = ss[1];
                     switch( type ) {
                         case ACTION: {
                             try {
